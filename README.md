@@ -2,6 +2,23 @@
 
 This is sample application for like the DDD architecture.
 
+## Design
+
+* application
+    * Write business logic
+* domain
+    * Define interface
+        * repository interface for infrastructure
+        * service interface for application
+    * Define struct
+        * Entity struct that represent mapping to data model
+* infrastructure
+    * Implements repository interface
+    * Solves backend technical topics
+        * e.x. message queue
+* interfaces
+    * Write HTTP handler and middleware
+
 #### References:
 
 * https://speakerdeck.com/mercari/ja-golang-package-composition-for-web-application-the-case-of-mercari-kauru
