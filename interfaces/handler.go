@@ -80,9 +80,9 @@ func JSON(w http.ResponseWriter, code int, src interface{}) {
 // Routes returns the initialized router
 func Routes() *router.Router {
 	r := router.NewRouter()
-	r.Get("/user/:id", nil)
-	r.Get("/users", nil)
-	r.Post("/user", nil)
+	r.Get("/user/:id", getUser)
+	r.Get("/users", getUsers)
+	r.Post("/user", createUser)
 
 	return r
 }
