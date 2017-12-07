@@ -19,7 +19,7 @@ func NewUserRepositoryWithRDB(conn *sql.DB) repository.UserRepository {
 
 // Get returns domain.User
 func (r *UserRepositoryImpl) Get(id int) (*domain.User, error) {
-	row, err := r.queryRow("select id, name from ddd-sample where id=?", id)
+	row, err := r.queryRow("select id, name from users where id=?", id)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (r *UserRepositoryImpl) Get(id int) (*domain.User, error) {
 
 // GetAll returns list of domain.User
 func (r *UserRepositoryImpl) GetAll() ([]*domain.User, error) {
-	rows, err := r.query("select id, name from ddd-sample")
+	rows, err := r.query("select id, name from users")
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (r *UserRepositoryImpl) GetAll() ([]*domain.User, error) {
 
 // Save saves domain.User to storage
 func (r *UserRepositoryImpl) Save(u *domain.User) error {
-	stmt, err := r.Conn.Prepare("insert into ddd-sample (name) values (?)")
+	stmt, err := r.Conn.Prepare("insert into users (name) values (?)")
 	if err != nil {
 		return err
 	}
