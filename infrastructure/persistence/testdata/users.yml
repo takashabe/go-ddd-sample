@@ -1,0 +1,12 @@
+table: users
+record:
+  - id: 1
+    name: satoshi
+  - id: 2
+    name: kasumi
+  - id: 3
+    name: takeshi
+  - id: 4
+    name: kojiro
+  - id: 5
+    name: musashi

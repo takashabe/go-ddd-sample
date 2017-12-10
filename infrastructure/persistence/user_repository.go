@@ -3,6 +3,7 @@ package persistence
 import (
 	"database/sql"
 
+	_ "github.com/go-sql-driver/mysql" // driver
 	"github.com/takashabe/go-ddd-sample/domain"
 	"github.com/takashabe/go-ddd-sample/domain/repository"
 )
