@@ -1,13 +1,14 @@
 package application
 
 import (
+	"github.com/takashabe/go-ddd-sample/config"
 	"github.com/takashabe/go-ddd-sample/domain"
 	"github.com/takashabe/go-ddd-sample/infrastructure/persistence"
 )
 
 // GetUser returns user
 func GetUser(id int) (*domain.User, error) {
-	conn, err := NewDBConnection()
+	conn, err := config.NewDBConnection()
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +20,7 @@ func GetUser(id int) (*domain.User, error) {
 
 // GetUsers returns user list
 func GetUsers() ([]*domain.User, error) {
-	conn, err := NewDBConnection()
+	conn, err := config.NewDBConnection()
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +32,7 @@ func GetUsers() ([]*domain.User, error) {
 
 // AddUser saves new user
 func AddUser(name string) error {
-	conn, err := NewDBConnection()
+	conn, err := config.NewDBConnection()
 	if err != nil {
 		return err
 	}
