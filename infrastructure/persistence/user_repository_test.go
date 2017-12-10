@@ -99,6 +99,7 @@ func TestSaveUser(t *testing.T) {
 		input string
 	}{
 		{"foo"},
+		{"foo"}, // duplicate
 	}
 	for i, c := range cases {
 		repo := NewUserRepositoryWithRDB(conn)
