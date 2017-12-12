@@ -12,8 +12,11 @@ import (
 )
 
 func loadFixture(t *testing.T, conn *sql.DB, file string) {
-	fixture := fixture.NewFixture(conn, "mysql")
-	err := fixture.Load(file)
+	fixture, err := fixture.NewFixture(conn, "mysql")
+	if err != nil {
+		t.Fatalf("want non error, got %#v", err)
+	}
+	err = fixture.Load(file)
 	if err != nil {
 		t.Fatalf("want non error, got %#v", err)
 	}
