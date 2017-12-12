@@ -6,7 +6,7 @@ deps:
 	dep ensure
 
 test:
-	go test -v $(SUBPACKAGES)
+	go test -v -p 1 $(SUBPACKAGES)
 
 vet:
 	go vet $(SUBPACKAGES)
