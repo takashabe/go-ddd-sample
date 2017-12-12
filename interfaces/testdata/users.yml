@@ -1,0 +1,6 @@
+table: users
+record:
+  - id: 1
+    name: satoshi
+  - id: 2
+    name: kasumi
