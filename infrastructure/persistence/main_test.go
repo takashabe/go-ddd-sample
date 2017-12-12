@@ -1,7 +1,7 @@
 package persistence
 
 import (
-	"log"
+	"os"
 	"testing"
 
 	"github.com/takashabe/go-ddd-sample/config"
@@ -11,7 +11,7 @@ import (
 
 func MainTest(m *testing.M) {
 	setup()
-	log.Fatal(m.Run())
+	os.Exit(m.Run())
 }
 
 func setup() {
