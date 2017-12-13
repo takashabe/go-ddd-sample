@@ -116,7 +116,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		Name string `json:"name"`
 	}
 	var p payload
-	err := json.NewDecoder(r.Body).Decode(p)
+	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
 		Error(w, http.StatusBadRequest, err, "failed to parse request")
 		return
