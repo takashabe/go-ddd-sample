@@ -91,7 +91,7 @@ func TestGetUsers(t *testing.T) {
 		expectCode int
 	}{
 		{
-			[]byte(`[{"id":1,"name":"satoshi"},{"id":2,"name":"kasumi"}]`),
+			[]byte(`{"users":[{"id":1,"name":"satoshi"},{"id":2,"name":"kasumi"}]}`),
 			http.StatusOK,
 		},
 	}

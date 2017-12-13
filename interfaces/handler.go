@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/takashabe/go-ddd-sample/application"
+	"github.com/takashabe/go-ddd-sample/domain"
 	router "github.com/takashabe/go-router"
 )
 
@@ -108,7 +109,10 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusNotFound, err, "failed to get user list")
 		return
 	}
-	JSON(w, http.StatusOK, users)
+	type payload struct {
+		Users []*domain.User `json:"users"`
+	}
+	JSON(w, http.StatusOK, payload{Users: users})
 }
 
 func createUser(w http.ResponseWriter, r *http.Request) {
