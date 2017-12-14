@@ -9,13 +9,12 @@ This is sample application for like the DDD architecture.
 * domain
     * Define interface
         * repository interface for infrastructure
-        * service interface for application
     * Define struct
         * Entity struct that represent mapping to data model
 * infrastructure
     * Implements repository interface
     * Solves backend technical topics
-        * e.x. message queue
+        * e.x. message queue, persistence with RDB
 * interfaces
     * Write HTTP handler and middleware
 
