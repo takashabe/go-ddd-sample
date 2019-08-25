@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"context"
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql" // driver
@@ -8,19 +9,19 @@ import (
 	"github.com/takashabe/go-ddd-sample/domain/repository"
 )
 
-// UserRepositoryImpl Implements repository.UserRepository
-type UserRepositoryImpl struct {
-	Conn *sql.DB
+// userRepository Implements repository.UserRepository
+type userRepository struct {
+	conn *sql.DB
 }
 
-// NewUserRepositoryWithRDB returns initialized UserRepositoryImpl
-func NewUserRepositoryWithRDB(conn *sql.DB) repository.UserRepository {
-	return &UserRepositoryImpl{Conn: conn}
+// NewUserRepository returns initialized UserRepositoryImpl
+func NewUserRepository(conn *sql.DB) repository.UserRepository {
+	return &userRepository{conn: conn}
 }
 
 // Get returns domain.User
-func (r *UserRepositoryImpl) Get(id int) (*domain.User, error) {
-	row, err := r.queryRow("select id, name from users where id=?", id)
+func (r *userRepository) Get(ctx context.Context, id int) (*domain.User, error) {
+	row, err := r.queryRow(ctx, "select id, name from users where id=?", id)
 	if err != nil {
 		return nil, err
 	}
@@ -33,8 +34,8 @@ func (r *UserRepositoryImpl) Get(id int) (*domain.User, error) {
 }
 
 // GetAll returns list of domain.User
-func (r *UserRepositoryImpl) GetAll() ([]*domain.User, error) {
-	rows, err := r.query("select id, name from users")
+func (r *userRepository) GetAll(ctx context.Context) ([]*domain.User, error) {
+	rows, err := r.query(ctx, "select id, name from users")
 	if err != nil {
 		return nil, err
 	}
@@ -52,33 +53,33 @@ func (r *UserRepositoryImpl) GetAll() ([]*domain.User, error) {
 }
 
 // Save saves domain.User to storage
-func (r *UserRepositoryImpl) Save(u *domain.User) error {
-	stmt, err := r.Conn.Prepare("insert into users (name) values (?)")
+func (r *userRepository) Save(ctx context.Context, u *domain.User) error {
+	stmt, err := r.conn.Prepare("insert into users (name) values (?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(u.Name)
+	_, err = stmt.ExecContext(ctx, u.Name)
 	return err
 }
 
-func (r *UserRepositoryImpl) query(q string, args ...interface{}) (*sql.Rows, error) {
-	stmt, err := r.Conn.Prepare(q)
+func (r *userRepository) query(ctx context.Context, q string, args ...interface{}) (*sql.Rows, error) {
+	stmt, err := r.conn.Prepare(q)
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	return stmt.Query(args...)
+	return stmt.QueryContext(ctx, args...)
 }
 
-func (r *UserRepositoryImpl) queryRow(q string, args ...interface{}) (*sql.Row, error) {
-	stmt, err := r.Conn.Prepare(q)
+func (r *userRepository) queryRow(ctx context.Context, q string, args ...interface{}) (*sql.Row, error) {
+	stmt, err := r.conn.Prepare(q)
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	return stmt.QueryRow(args...), nil
+	return stmt.QueryRowContext(ctx, args...), nil
 }

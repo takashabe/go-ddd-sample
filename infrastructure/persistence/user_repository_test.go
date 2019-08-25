@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"context"
 	"database/sql"
 	"reflect"
 	"testing"
@@ -49,8 +50,8 @@ func TestGetUser(t *testing.T) {
 		},
 	}
 	for i, c := range cases {
-		repo := NewUserRepositoryWithRDB(conn)
-		user, err := repo.Get(c.input)
+		repo := NewUserRepository(conn)
+		user, err := repo.Get(context.Background(), c.input)
 		if err != c.expectErr {
 			t.Fatalf("#%d: want error %#v, got %#v", i, c.expectErr, err)
 		}
@@ -76,8 +77,8 @@ func TestGetUsers(t *testing.T) {
 		{[]int{1, 2, 3, 4, 5}},
 	}
 	for i, c := range cases {
-		repo := NewUserRepositoryWithRDB(conn)
-		users, err := repo.GetAll()
+		repo := NewUserRepository(conn)
+		users, err := repo.GetAll(context.Background())
 		if err != nil {
 			t.Fatalf("#%d: want non error, got %#v", i, err)
 		}
@@ -105,15 +106,16 @@ func TestSaveUser(t *testing.T) {
 		{"foo"}, // duplicate
 	}
 	for i, c := range cases {
-		repo := NewUserRepositoryWithRDB(conn)
-		err := repo.Save(&domain.User{
+		ctx := context.Background()
+		repo := NewUserRepository(conn)
+		err := repo.Save(ctx, &domain.User{
 			Name: c.input,
 		})
 		if err != nil {
 			t.Fatalf("#%d: want non error, got %#v", i, err)
 		}
 
-		users, err := repo.GetAll()
+		users, err := repo.GetAll(ctx)
 		if err != nil {
 			t.Fatalf("#%d: want non error, got %#v", i, err)
 		}
