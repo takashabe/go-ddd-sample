@@ -6,6 +6,8 @@ import (
 	"github.com/takashabe/go-ddd-sample/domain"
 )
 
+//go:generate mockgen -package $GOPACKAGE -source $GOFILE -destination mock_$GOFILE
+
 // UserRepository represent repository of the user
 // Expect implementation by the infrastructure layer
 type UserRepository interface {

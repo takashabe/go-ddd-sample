@@ -9,6 +9,7 @@ import (
 
 	"github.com/takashabe/go-ddd-sample/application"
 	"github.com/takashabe/go-ddd-sample/domain"
+	"github.com/takashabe/go-ddd-sample/domain/repository"
 	router "github.com/takashabe/go-router"
 )
 
@@ -78,24 +79,33 @@ func JSON(w http.ResponseWriter, code int, src interface{}) {
 	Respond(w, code, src)
 }
 
-// Routes returns the initialized router
-func Routes() *router.Router {
-	r := router.NewRouter()
-	r.Get("/user/:id", getUser)
-	r.Get("/users", getUsers)
-	r.Post("/user", createUser)
+// Handler user handler
+type Handler struct {
+	Repository repository.UserRepository
+}
 
+// Routes returns the initialized router
+func (h Handler) Routes() *router.Router {
+	r := router.NewRouter()
+	r.Get("/user/:id", h.getUser)
+	r.Get("/users", h.getUsers)
+	r.Post("/user", h.createUser)
 	return r
 }
 
 // Run start server
-func Run(port int) error {
+func (h Handler) Run(port int) error {
 	log.Printf("Server running at http://localhost:%d/", port)
-	return http.ListenAndServe(fmt.Sprintf(":%d", port), Routes())
+	return http.ListenAndServe(fmt.Sprintf(":%d", port), h.Routes())
 }
 
-func getUser(w http.ResponseWriter, r *http.Request, id int) {
-	user, err := application.GetUser(id)
+func (h Handler) getUser(w http.ResponseWriter, r *http.Request, id int) {
+	ctx := r.Context()
+
+	interactor := application.UserInteractor{
+		Repository: h.Repository,
+	}
+	user, err := interactor.GetUser(ctx, id)
 	if err != nil {
 		Error(w, http.StatusNotFound, err, "failed to get user")
 		return
@@ -103,8 +113,13 @@ func getUser(w http.ResponseWriter, r *http.Request, id int) {
 	JSON(w, http.StatusOK, user)
 }
 
-func getUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := application.GetUsers()
+func (h Handler) getUsers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	interactor := application.UserInteractor{
+		Repository: h.Repository,
+	}
+	users, err := interactor.GetUsers(ctx)
 	if err != nil {
 		Error(w, http.StatusNotFound, err, "failed to get user list")
 		return
@@ -115,19 +130,23 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, payload{Users: users})
 }
 
-func createUser(w http.ResponseWriter, r *http.Request) {
+func (h Handler) createUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	type payload struct {
 		Name string `json:"name"`
 	}
 	var p payload
-	err := json.NewDecoder(r.Body).Decode(&p)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		Error(w, http.StatusBadRequest, err, "failed to parse request")
 		return
 	}
 
-	err = application.AddUser(p.Name)
-	if err != nil {
+	interactor := application.UserInteractor{
+		Repository: h.Repository,
+	}
+
+	if err := interactor.AddUser(ctx, p.Name); err != nil {
 		Error(w, http.StatusInternalServerError, err, "failed to create user")
 		return
 	}

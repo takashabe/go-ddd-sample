@@ -14,7 +14,7 @@ func NewUser(name string) (*User, error) {
 		return nil, fmt.Errorf("invalid name")
 	}
 
-  return &User{
-    Name: name, 
-  }, nil
+	return &User{
+		Name: name,
+	}, nil
 }

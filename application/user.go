@@ -7,19 +7,19 @@ import (
 	"github.com/takashabe/go-ddd-sample/domain/repository"
 )
 
-// UserInteractor provides use-case 
+// UserInteractor provides use-case
 type UserInteractor struct {
-	repository repository.UserRepository
+	Repository repository.UserRepository
 }
 
 // GetUser returns user
 func (i UserInteractor) GetUser(ctx context.Context, id int) (*domain.User, error) {
-	return i.repository.Get(ctx, id)
+	return i.Repository.Get(ctx, id)
 }
 
 // GetUsers returns user list
 func (i UserInteractor) GetUsers(ctx context.Context) ([]*domain.User, error) {
-	return i.repository.GetAll(ctx)
+	return i.Repository.GetAll(ctx)
 }
 
 // AddUser saves new user
@@ -28,5 +28,5 @@ func (i UserInteractor) AddUser(ctx context.Context, name string) error {
 	if err != nil {
 		return err
 	}
-	return i.repository.Save(ctx, u)
+	return i.Repository.Save(ctx, u)
 }
