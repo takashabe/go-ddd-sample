@@ -1,46 +1,32 @@
 package application
 
 import (
-	"github.com/takashabe/go-ddd-sample/config"
+	"context"
+
 	"github.com/takashabe/go-ddd-sample/domain"
-	"github.com/takashabe/go-ddd-sample/infrastructure/persistence"
+	"github.com/takashabe/go-ddd-sample/domain/repository"
 )
 
-// GetUser returns user
-func GetUser(id int) (*domain.User, error) {
-	conn, err := config.NewDBConnection()
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
+// UserInteractor provides use-case
+type UserInteractor struct {
+	Repository repository.UserRepository
+}
 
-	repo := persistence.NewUserRepositoryWithRDB(conn)
-	return repo.Get(id)
+// GetUser returns user
+func (i UserInteractor) GetUser(ctx context.Context, id int) (*domain.User, error) {
+	return i.Repository.Get(ctx, id)
 }
 
 // GetUsers returns user list
-func GetUsers() ([]*domain.User, error) {
-	conn, err := config.NewDBConnection()
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	repo := persistence.NewUserRepositoryWithRDB(conn)
-	return repo.GetAll()
+func (i UserInteractor) GetUsers(ctx context.Context) ([]*domain.User, error) {
+	return i.Repository.GetAll(ctx)
 }
 
 // AddUser saves new user
-func AddUser(name string) error {
-	conn, err := config.NewDBConnection()
+func (i UserInteractor) AddUser(ctx context.Context, name string) error {
+	u, err := domain.NewUser(name)
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
-
-	repo := persistence.NewUserRepositoryWithRDB(conn)
-	u := &domain.User{
-		Name: name,
-	}
-	return repo.Save(u)
+	return i.Repository.Save(ctx, u)
 }

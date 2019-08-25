@@ -1,15 +1,16 @@
 SUBPACKAGES := $(shell go list ./...)
 
-.PHONY: deps test vet lint
+.DEFAULT_GOAL := help
 
-deps:
-	dep ensure
+.PHONY: generate
+generate: ## Invoke go generate
+	go generate ./...
 
-test:
-	go test -v -p 1 $(SUBPACKAGES)
+.PHONY: test
+test: ## Run go test
+	go test -v$(SUBPACKAGES)
 
-vet:
-	go vet $(SUBPACKAGES)
+.PHONY: help
+help: ## Help
+	@grep -E '^[0-9a-zA-Z_/()$$-]+:.*?## .*$$' $(lastword $(MAKEFILE_LIST)) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-lint:
-	golint $(SUBPACKAGES)
